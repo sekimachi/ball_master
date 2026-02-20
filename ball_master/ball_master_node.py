@@ -1,11 +1,11 @@
 from rclpy.node import Node
 from rclpy.action import ActionServer
-from imrc_messages.action import BallColor
 import rclpy
 from std_msgs.msg import String
 from std_msgs.msg import Bool
 from std_msgs.msg import Bool
-
+from imrc_messages.action import BallColor
+from imrc_messages.srv import BallCancel
 
 
 class BallMaster(Node):
@@ -26,10 +26,14 @@ class BallMaster(Node):
 
         # ===== Publisher =====
         self.operate_enable_pub = self.create_publisher(Bool, 'ball_operate_enable', 10)
+        self.ball_force_stop = self.create_publisher(Bool,'ball_force_stop',10)
 
         # ===== Action Server =====
         self._action_server = ActionServer( self,BallColor,'ball_color',self.execute_callback)
         
+        # ===== Service Server =====
+        self._cancel_service = self.create_service(BallCancel, 'ball_cancel', self.ball_cancel)
+
         # ===== Subscriber =====
         self.create_subscription(Bool, 'detect_ball_status', self.status_cb, 10)
         self.create_subscription(Bool, 'ball_capture', self.capture_cb, 10)
@@ -85,6 +89,17 @@ class BallMaster(Node):
 
             rclpy.spin_once(self, timeout_sec=0.1)
         # ====================
+
+    def ball_cancel(self, request, response):
+        self.get_logger().info("キャンセル要求を受け取りました")
+        self.state = "IDLE"
+        msg = Bool()
+        msg.data = True
+        self.ball_force_stop.publish(msg)
+
+        response.success = True
+        return response
+
 
     # ===============================
     # ball_captureのコールバック。ball_operateノードから捕獲成功の通知を受け取る。
