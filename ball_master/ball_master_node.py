@@ -32,7 +32,7 @@ class BallMaster(Node):
         self._action_server = ActionServer( self,BallColor,'ball_color',self.execute_callback)
         
         # ===== Service Server =====
-        self._cancel_service = self.create_service(BallCancel, 'ball_cancel', self.ball_cancel)
+        self._cancel_service = self.create_service(BallCancel, 'ball_cancel', self.ball_cancel_cb)
 
         # ===== Subscriber =====
         self.create_subscription(Bool, 'detect_ball_status', self.status_cb, 10)
@@ -90,9 +90,11 @@ class BallMaster(Node):
             rclpy.spin_once(self, timeout_sec=0.1)
         # ====================
 
-    def ball_cancel(self, request, response):
+    # ==== キャンセル要求のコールバック ====
+    def ball_cancel_cb(self, request, response):
         self.get_logger().info("キャンセル要求を受け取りました")
         self.state = "IDLE"
+        
         msg = Bool()
         msg.data = True
         self.ball_force_stop.publish(msg)
