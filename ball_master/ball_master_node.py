@@ -97,7 +97,7 @@ class BallMaster(Node):
 
     def status_cb(self, msg):
         if not msg.data:
-            self.get_logger().error("Detector_nodeで失敗通知を受信")
+            self.get_logger().error("失敗通知を受信")
             self.state = "IDLE"
             self.ball_catch = False
             self.detect_failed = True
