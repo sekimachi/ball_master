@@ -25,8 +25,16 @@ def generate_launch_description():
         output='screen'
     )
 
+    ball_catch = Node(
+        package='ball_catch',
+        executable='ball_catch',
+        name='ball_catch',
+        output='screen'
+    )
+
     return LaunchDescription([
         ball_master,
         ball_detector,
         ball_operate,
+        ball_catch,
     ])

@@ -36,7 +36,7 @@ class BallMaster(Node):
 
         # ===== Subscriber =====
         self.create_subscription(Bool, 'detect_ball_status', self.status_cb, 10)
-        self.create_subscription(Bool, 'ball_capture', self.capture_cb, 10)
+        self.create_subscription(Bool, 'ball_catch', self.catch_cb, 10)
 
         
     # =================================================================
@@ -48,7 +48,6 @@ class BallMaster(Node):
         # ==== 初期化 ====
         self.target_color = goal_handle.request.color
         self.state = "SEARCHING"
-        self.ball_catch = False
         self.ball_catch = False
         self.detect_failed = False
 
@@ -104,13 +103,13 @@ class BallMaster(Node):
 
 
     # ===============================
-    # ball_captureのコールバック。ball_operateノードから捕獲成功の通知を受け取る。
+    # ball_catchのコールバック。
     # ===============================
-    def capture_cb(self, msg: Bool):
+    def catch_cb(self, msg: Bool):
         if msg.data:
             self.get_logger().info("operate_nodeから捕獲成功の通知を受信")
             self.ball_catch = True
-            self.state = "CAPTURED"
+            self.state = "CATCHED"
 
     def status_cb(self, msg):
         if not msg.data:
