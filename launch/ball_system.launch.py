@@ -32,9 +32,17 @@ def generate_launch_description():
         output='screen'
     )
 
+    image_server = Node(
+        package='image_server',
+        executable='image_server',
+        name='image_server',
+        output='screen'
+    )
+
     return LaunchDescription([
         ball_master,
         ball_detector,
         ball_operate,
         ball_catch,
+        image_server,
     ])
